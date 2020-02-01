@@ -34,9 +34,7 @@ class _HomePageState extends State<HomePage> {
 
   Row _body() {
     return Row(
-      children: <Widget>[
-        _bodyContent()
-      ],
+      children: <Widget>[_bodyContent()],
       mainAxisAlignment: MainAxisAlignment.center,
     );
   }
@@ -53,23 +51,31 @@ class _HomePageState extends State<HomePage> {
   ClipRRect _imageBox() {
     return ClipRRect(
       child: Container(
-        width: _screenSize.width * 0.5,
+        width: _screenSize.width * 0.6,
         height: _screenSize.height * 0.3,
-        child: widget.image ?? Image(image: AssetImage("assets/noImage.png"), fit: BoxFit.fill),
+        child: widget.image ??
+            Image(image: AssetImage("assets/noImage.png"), fit: BoxFit.fill),
       ),
       borderRadius: BorderRadius.circular(30.0),
     );
   }
 
-  FloatingActionButton _cameraButton() {
-    return FloatingActionButton(
-      backgroundColor: Colors.orange,
-      foregroundColor: Colors.white,
-      child: Icon(Icons.camera_alt),
-      onPressed: ()
-      {
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TakePhotoWidget(cameras: widget.cameras, cachedImage: widget.image)));        
-      },
-    );
+  Widget _cameraButton() {
+    if (widget.cameras.isNotEmpty) {
+      return FloatingActionButton(
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+        child: Icon(Icons.camera_alt),
+        onPressed: () {
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => TakePhotoWidget(
+                      cameras: widget.cameras, cachedImage: widget.image)));
+        },
+      );
+    } else {
+      return Text("Usted necesita una cámara para poder usar este programa");
+    }
   }
 }

@@ -10,11 +10,8 @@ class TakePhotoWidget extends StatefulWidget {
   final List<CameraDescription> cameras;
   final Image cachedImage;
 
-  const TakePhotoWidget({
-    Key key,
-    @required this.cameras,
-    this.cachedImage
-  }) : super(key: key);
+  const TakePhotoWidget({Key key, @required this.cameras, this.cachedImage})
+      : super(key: key);
 
   @override
   _TakePhotoWidgetState createState() => _TakePhotoWidgetState();
@@ -25,6 +22,7 @@ class _TakePhotoWidgetState extends State<TakePhotoWidget> {
   Future<void> _initializeControllerFuture;
   CameraDescription _camera;
   int _cameraIndex = 0;
+  bool _rotateCameraEnabled = true;
 
   @override
   void initState() {
@@ -39,19 +37,27 @@ class _TakePhotoWidgetState extends State<TakePhotoWidget> {
     super.dispose();
   }
 
+  //TODO: Resolver excepción de botón de cambio de cámara presionado multiples veces
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.orange,
-        leading: IconButton(icon: Icon(Icons.arrow_back, color: Colors.white,), onPressed: (){
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => HomePage(cameras: widget.cameras, image: widget.cachedImage),
-            ),
-          );
-        }, ),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomePage(
+                    cameras: widget.cameras, image: widget.cachedImage),
+              ),
+            );
+          },
+        ),
         title: Text("Face Recognizer"),
       ),
       // Wait until the controller is initialized before displaying the
@@ -62,9 +68,11 @@ class _TakePhotoWidgetState extends State<TakePhotoWidget> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             // If the Future is complete, display the preview.
+            _rotateCameraEnabled = true;
             return CameraPreview(_controller);
           } else {
             // Otherwise, display a loading indicator.
+            _rotateCameraEnabled = false;
             return Center(child: CircularProgressIndicator());
           }
         },
@@ -119,7 +127,10 @@ class _TakePhotoWidgetState extends State<TakePhotoWidget> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => HomePage(cameras: widget.cameras, image: Image.file(File(path)),),
+              builder: (context) => HomePage(
+                cameras: widget.cameras,
+                image: Image.file(File(path)),
+              ),
             ),
           );
         } catch (e) {
@@ -130,35 +141,39 @@ class _TakePhotoWidgetState extends State<TakePhotoWidget> {
     );
   }
 
-  FloatingActionButton _changeCameraButton() {
-    return FloatingActionButton(
-      heroTag: "changeCameraButton",
-      child: Icon(Icons.cached),
-      backgroundColor: Colors.orange,
-      foregroundColor: Colors.white,
-      onPressed: _changeCamera,
-    );
+  Widget _changeCameraButton() {
+    if (widget.cameras.length > 1) {
+      return FloatingActionButton(
+          heroTag: "changeCameraButton",
+          child: Icon(Icons.cached),
+          backgroundColor: Colors.orange,
+          foregroundColor: Colors.white,
+          onPressed: () {
+            if (_rotateCameraEnabled) {
+              _changeCamera();
+            } else {
+              return;
+            }
+          });
+    } else {
+      return Container();
+    }
   }
 
   _changeCamera() {
-    int _totalCameras = widget.cameras.length;
     setState(() {
-      (_cameraIndex == _totalCameras - 1) ? _cameraIndex = 0 : _cameraIndex++;
+      (_cameraIndex == 0) ? _cameraIndex = 1 : _cameraIndex = 0;
       _initializeCamera();
-      
     });
   }
 
-  _initializeCamera()
-  {
+  _initializeCamera() {
     if (widget.cameras.isNotEmpty) {
-        _camera = widget.cameras[_cameraIndex];
-      }
-      _controller = CameraController(
-        _camera,
-        ResolutionPreset.veryHigh,
-      );
-      // Next, initialize the controller. This returns a Future.
-      _initializeControllerFuture = _controller.initialize();
+      _camera = widget.cameras[_cameraIndex];
+    }
+    _controller = CameraController(_camera, ResolutionPreset.veryHigh,
+        enableAudio: false);
+    // Next, initialize the controller. This returns a Future.
+    _initializeControllerFuture = _controller.initialize();
   }
 }
