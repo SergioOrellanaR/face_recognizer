@@ -1,6 +1,6 @@
 # facial_recognizer
 
-This project is a facial recognizer app
+This project is a facial recognizer app.
 
 ## Getting Started
 
