@@ -1,5 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:facial_recognizer/src/widgets/OperationButtonWidget.dart';
 import 'package:facial_recognizer/src/widgets/TakePhotoWidget.dart';
+import 'package:facial_recognizer/utils/utils.dart'  as utils;
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,35 +20,30 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(
-      appBar: _appBar(),
-      body: _body(),
-      floatingActionButton: _cameraButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      appBar: utils.appBar(),
+      body: _body()
     );
   }
 
-  AppBar _appBar() {
-    return AppBar(
-      title: Text("Facial Recognizer"),
-      backgroundColor: Colors.orange,
-    );
-  }
+  
 
-  Row _body() {
-    return Row(
-      children: <Widget>[_bodyContent()],
-      mainAxisAlignment: MainAxisAlignment.center,
-    );
-  }
-
-  Column _bodyContent() {
-    return Column(children: <Widget>[
+  ListView _body() {
+    return ListView(children: <Widget>[
       SizedBox(
         height: _screenSize.height * 0.05,
       ),
-      _imageBox()
-    ], mainAxisAlignment: MainAxisAlignment.start);
+      Align(child: _imageBox(), alignment: Alignment.center,),
+      SizedBox(
+        height: _screenSize.height * 0.1,
+      ),
+      OperationButton(message: "Registrar persona", backgroundColor: Colors.lightBlue, function: _registerPersonFunction(), isMainButton: true,),
+      utils.verticalSeparator(),
+      OperationButton(message: "Eliminar persona", backgroundColor: Colors.red, function: _deletePersonFunction, isMainButton: true),
+      utils.verticalSeparator(),
+      OperationButton(message: "Reconocer persona por imagen", backgroundColor: Colors.green, function: _recognizePersonFunction, isMainButton: true)
+    ]);
   }
+
 
   ClipRRect _imageBox() {
     return ClipRRect(
@@ -56,8 +53,29 @@ class _HomePageState extends State<HomePage> {
         child: widget.image ??
             Image(image: AssetImage("assets/noImage.png"), fit: BoxFit.fill),
       ),
-      borderRadius: BorderRadius.circular(30.0),
+      borderRadius: BorderRadius.circular(20.0),
     );
+  }
+
+  Function _registerPersonFunction()
+  {
+    return (){
+      Navigator.pushNamed(context, "registration");
+    };
+  }
+
+  Function _deletePersonFunction()
+  {
+    return (){
+
+    };
+  }
+
+  Function _recognizePersonFunction()
+  {
+    return (){
+
+    };
   }
 
   Widget _cameraButton() {
