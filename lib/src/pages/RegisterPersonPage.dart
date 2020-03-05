@@ -4,7 +4,6 @@ import 'package:facial_recognizer/src/providers/DBProvider.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
@@ -16,7 +15,6 @@ class RegisterPersonPage extends StatefulWidget {
 
 class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Size _screenSize;
-  TextEditingController _textEditingController;
   PersonBloc _person = new PersonBloc();
   String _imagePath;
 

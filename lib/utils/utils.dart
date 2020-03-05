@@ -8,6 +8,7 @@ SizedBox verticalSeparator() {
 
 AppBar appBar() {
   return AppBar(
-    title: Text("Facial Recognizer")
+    title: Text("Facial Recognizer"),
+    backgroundColor: Colors.indigo,
   );
 }

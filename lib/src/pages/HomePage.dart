@@ -1,8 +1,14 @@
+import 'dart:io';
+
+import 'package:facial_recognizer/src/models/ComparisonResult.dart';
+import 'package:facial_recognizer/src/models/Person.dart';
+import 'package:facial_recognizer/src/models/PersonInformationController.dart';
 import 'package:facial_recognizer/src/providers/DBProvider.dart';
 import 'package:facial_recognizer/src/widgets/HorizontalImageListView.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -29,13 +35,11 @@ class _HomePageState extends State<HomePage> {
       ),
       loadPersons(),
       SizedBox(
-        height: _screenSize.height * 0.1,
+        height: _screenSize.height * 0.2,
       ),
-      OperationButton(message: "Registrar persona", backgroundColor: Colors.lightBlue, function: _registerPersonFunction(), isMainButton: true,),
+      OperationButton(message: "Registrar", backgroundColor: Colors.indigo, function: _registerPersonFunction(), isMainButton: true,),
       utils.verticalSeparator(),
-      OperationButton(message: "Eliminar persona", backgroundColor: Colors.red, function: _deletePersonFunction, isMainButton: true),
-      utils.verticalSeparator(),
-      OperationButton(message: "Reconocer persona por imagen", backgroundColor: Colors.green, function: _recognizePersonFunction, isMainButton: true)
+      OperationButton(message: "Reconocer", backgroundColor: Colors.green, function: _recognizePersonFunction(), isMainButton: true)
     ]);
   }
 
@@ -63,16 +67,20 @@ class _HomePageState extends State<HomePage> {
     };
   }
 
-  Function _deletePersonFunction()
-  {
-    return (){
-    };
-  }
-
   Function _recognizePersonFunction()
   {
-    return (){
-      
-    };
+    return _getImage;
+  }
+
+  Future _getImage() async {
+    File _image =
+        await ImagePicker.pickImage(source: ImageSource.camera, imageQuality: 100);
+    if (_image != null) {
+
+      //TODO: Realizar operaciones.
+      // ComparisonResult comparisonResult = ComparisonResult(imagePath: _image.path);
+      // Person person = new Person(id: 1, imagePath: _image.path);
+      // Navigator.pushNamed(context, "information", arguments: PersonInformationController(person: person, comparisonResult: comparisonResult));
+    }
   }
 }
