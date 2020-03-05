@@ -1,11 +1,8 @@
-import 'package:camera/camera.dart';
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:facial_recognizer/src/models/RegisterPersonController.dart';
 import 'package:facial_recognizer/src/widgets/OperationButtonWidget.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
 
@@ -18,11 +15,9 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Size _screenSize;
   TextEditingController _textEditingController;
   PersonBloc _person = new PersonBloc();
-  RegisterPersonController _controller;
 
   @override
   Widget build(BuildContext context) {
-    _controller = ModalRoute.of(context).settings.arguments;
     _screenSize = MediaQuery.of(context).size;
     return Scaffold(appBar: utils.appBar(), body: _body());
   }
@@ -33,7 +28,7 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         height: _screenSize.height * 0.05,
       ),
       Align(
-        child: _imageBox(),
+        child: _imageStream(),
         alignment: Alignment.center,
       ),
       utils.verticalSeparator(),
@@ -62,23 +57,11 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
       stream: _person.formValidStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return OperationButton(
-        message: "Registrar",
-        backgroundColor: Colors.indigo,
-        function: snapshot.hasData ? () => {} : null,
-        isMainButton: true);
+            message: "Registrar",
+            backgroundColor: Colors.indigo,
+            function: snapshot.hasData ? () => {} : null,
+            isMainButton: true);
       },
-    );
-  }
-
-  ClipRRect _imageBox() {
-    return ClipRRect(
-      child: Container(
-        width: _screenSize.width * 0.6,
-        height: _screenSize.height * 0.3,
-        child: _controller.image ??
-            Image(image: AssetImage("assets/noImage.png"), fit: BoxFit.fill),
-      ),
-      borderRadius: BorderRadius.circular(20.0),
     );
   }
 
@@ -101,19 +84,33 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         heroTag: "photoFromGallery");
   }
 
-  Widget _selectPhotoFromCamera() {
-    if (_controller.cameras.isNotEmpty) {
-      return FloatingActionButton(
-        backgroundColor: Colors.indigo,
-        foregroundColor: Colors.white,
-        child: Icon(Icons.camera_alt),
-        onPressed: () async {
-          await _getImage(source: ImageSource.camera);
-        },
-      );
-    } else {
-      return Text("Usted necesita una cámara para poder usar este programa");
-    }
+  FloatingActionButton _selectPhotoFromCamera() {
+    return FloatingActionButton(
+      backgroundColor: Colors.indigo,
+      foregroundColor: Colors.white,
+      child: Icon(Icons.camera_alt),
+      onPressed: () async {
+        await _getImage(source: ImageSource.camera);
+      },
+    );
+  }
+
+  Widget _imageStream() {
+    return StreamBuilder(
+      stream: _person.imageStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return ClipRRect(
+          child: Container(
+            width: _screenSize.width * 0.6,
+            height: _screenSize.height * 0.3,
+            child: snapshot.data ??
+                Image(
+                    image: AssetImage("assets/noImage.png"), fit: BoxFit.fill),
+          ),
+          borderRadius: BorderRadius.circular(20.0),
+        );
+      },
+    );
   }
 
   StreamTextField _nameTextField() {
@@ -168,9 +165,7 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Future _getImage({@required ImageSource source}) async {
     var _image = await ImagePicker.pickImage(source: source, imageQuality: 100);
     if (_image != null) {
-      setState(() {
-        _controller.image = Image.file(_image);
-      });
+      _person.changeImage(Image.file(_image));
     }
   }
 }
