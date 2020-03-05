@@ -6,7 +6,7 @@ class Validators {
   final validateImage = StreamTransformer<Image, Image>.fromHandlers(
     handleData: (image, sink)
     {
-      //Realizar validación de si es o no un rostro.
+      //TODO: Realizar validación de si es o no un rostro.
 
       if (false)
       {

@@ -3,7 +3,7 @@ import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:facial_recognizer/src/widgets/OperationButtonWidget.dart';
+import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
 
 class RegisterPersonPage extends StatefulWidget {
