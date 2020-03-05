@@ -11,10 +11,10 @@ class PersonBloc with Validators{
   final _hobbyController = BehaviorSubject<String>();
 
   //Recuperar datos de stream
-  Stream<Image> get imageStream => _imageController.stream.transform(validateImage);
-  Stream<String> get nameStream => _nameController.stream;
-  Stream<String> get professionStream => _professionController.stream;
-  Stream<String> get hobbyStream => _hobbyController.stream;
+  Stream<Image> get imageStream => _imageController.stream.transform(validateImage).asBroadcastStream();
+  Stream<String> get nameStream => _nameController.stream.asBroadcastStream();
+  Stream<String> get professionStream => _professionController.stream.asBroadcastStream();
+  Stream<String> get hobbyStream => _hobbyController.stream.asBroadcastStream();
 
   //Si existe dato en los 4 devuelve true, si es que no, devuelve null
   Stream<bool> get formValidStream => CombineLatestStream.combine4(

@@ -1,6 +1,9 @@
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
+import 'package:facial_recognizer/src/models/Person.dart';
+import 'package:facial_recognizer/src/providers/DBProvider.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
+import 'dart:io' as io;
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
@@ -15,6 +18,7 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Size _screenSize;
   TextEditingController _textEditingController;
   PersonBloc _person = new PersonBloc();
+  String _imagePath;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +63,17 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         return OperationButton(
             message: "Registrar",
             backgroundColor: Colors.indigo,
-            function: snapshot.hasData ? () => {} : null,
+            function: snapshot.hasData
+                ? (){
+                      DBProvider.connection.insertPerson(Person(
+                          name: _person.getName,
+                          profession: _person.getProfession,
+                          hobby: _person.getHobby,
+                          imagePath: _imagePath));
+                      
+                      Navigator.pushReplacementNamed(context, "home");
+                    }
+                : null,
             isMainButton: true);
       },
     );
@@ -140,32 +154,12 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         onChangedFunction: _person.changeHobby);
   }
 
-  Container _personTextField(
-      {String labelText, String helperText, String property}) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.0),
-      child: TextFormField(
-        controller: _textEditingController,
-        maxLines: 1,
-        inputFormatters: [LengthLimitingTextInputFormatter(50)],
-        decoration: InputDecoration(
-          labelText: labelText,
-          helperText: helperText,
-        ),
-        maxLengthEnforced: true,
-        onChanged: (value) {
-          setState(() {
-            property = value;
-          });
-        },
-      ),
-    );
-  }
-
   Future _getImage({@required ImageSource source}) async {
-    var _image = await ImagePicker.pickImage(source: source, imageQuality: 100);
+    io.File _image =
+        await ImagePicker.pickImage(source: source, imageQuality: 100);
     if (_image != null) {
       _person.changeImage(Image.file(_image));
+      _imagePath = _image.path;
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:facial_recognizer/src/providers/DBProvider.dart';
+import 'package:facial_recognizer/src/widgets/HorizontalImageListView.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
@@ -25,7 +27,7 @@ class _HomePageState extends State<HomePage> {
       SizedBox(
         height: _screenSize.height * 0.05,
       ),
-      //Agregar galeria de listView horizontal.
+      loadPersons(),
       SizedBox(
         height: _screenSize.height * 0.1,
       ),
@@ -35,6 +37,23 @@ class _HomePageState extends State<HomePage> {
       utils.verticalSeparator(),
       OperationButton(message: "Reconocer persona por imagen", backgroundColor: Colors.green, function: _recognizePersonFunction, isMainButton: true)
     ]);
+  }
+
+  FutureBuilder loadPersons()
+  {
+    return FutureBuilder(
+      future: DBProvider.connection.getAllPersons(),
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if(snapshot.hasData)
+        {
+          return HorizontalImageListView(persons: snapshot.data);
+        }
+        else
+        {
+          return CircularProgressIndicator();
+        }
+      },
+    );
   }
 
   Function _registerPersonFunction()
