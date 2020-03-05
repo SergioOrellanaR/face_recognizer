@@ -1,7 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:facial_recognizer/src/models/RegisterPersonController.dart';
 import 'package:facial_recognizer/src/widgets/OperationButtonWidget.dart';
-import 'package:facial_recognizer/src/widgets/TakePhotoWidget.dart';
-import 'package:facial_recognizer/utils/utils.dart'  as utils;
+import 'package:facial_recognizer/utils/utils.dart' as utils;
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -60,40 +60,19 @@ class _HomePageState extends State<HomePage> {
   Function _registerPersonFunction()
   {
     return (){
-      Navigator.pushNamed(context, "registration");
+      Navigator.pushNamed(context, "registration", arguments: RegisterPersonController(cameras: widget.cameras));
     };
   }
 
   Function _deletePersonFunction()
   {
     return (){
-
     };
   }
 
   Function _recognizePersonFunction()
   {
     return (){
-
     };
-  }
-
-  Widget _cameraButton() {
-    if (widget.cameras.isNotEmpty) {
-      return FloatingActionButton(
-        backgroundColor: Colors.orange,
-        foregroundColor: Colors.white,
-        child: Icon(Icons.camera_alt),
-        onPressed: () {
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => TakePhotoWidget(
-                      cameras: widget.cameras, cachedImage: widget.image)));
-        },
-      );
-    } else {
-      return Text("Usted necesita una cámara para poder usar este programa");
-    }
   }
 }
