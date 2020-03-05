@@ -1,4 +1,7 @@
 import 'package:camera/camera.dart';
+import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
+import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
@@ -14,7 +17,7 @@ class RegisterPersonPage extends StatefulWidget {
 class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Size _screenSize;
   TextEditingController _textEditingController;
-  String _personName;
+  PersonBloc _person = new PersonBloc();
   RegisterPersonController _controller;
 
   @override
@@ -36,18 +39,35 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
       utils.verticalSeparator(),
       _selectPhotoFrom(),
       utils.verticalSeparator(),
-      _personNameTextField(),
+      _personInformation(),
       utils.verticalSeparator(),
       _registerButton()
     ]);
   }
 
-  OperationButton _registerButton() {
-    return OperationButton(
+  Wrap _personInformation() {
+    return Wrap(
+      children: <Widget>[
+        _nameTextField(),
+        utils.verticalSeparator(),
+        _professionTextField(),
+        utils.verticalSeparator(),
+        _hobbyTextField()
+      ],
+    );
+  }
+
+  _registerButton() {
+    return StreamBuilder(
+      stream: _person.formValidStream,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        return OperationButton(
         message: "Registrar",
-        backgroundColor: Colors.lightBlue,
-        function: () {},
+        backgroundColor: Colors.indigo,
+        function: snapshot.hasData ? () => {} : null,
         isMainButton: true);
+      },
+    );
   }
 
   ClipRRect _imageBox() {
@@ -96,7 +116,35 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
     }
   }
 
-  Container _personNameTextField() {
+  StreamTextField _nameTextField() {
+    return StreamTextField(
+        labelText: "Nombre",
+        labelHint: "Nombre de la persona",
+        leadingIcon: Icons.person,
+        stream: _person.nameStream,
+        onChangedFunction: _person.changeName);
+  }
+
+  StreamTextField _professionTextField() {
+    return StreamTextField(
+        labelText: "Profesión",
+        labelHint: "Profesión de la persona",
+        leadingIcon: Icons.work,
+        stream: _person.professionStream,
+        onChangedFunction: _person.changeProfession);
+  }
+
+  StreamTextField _hobbyTextField() {
+    return StreamTextField(
+        labelText: "Hobby",
+        labelHint: "Hobby favorito de la persona",
+        leadingIcon: Icons.star,
+        stream: _person.hobbyStream,
+        onChangedFunction: _person.changeHobby);
+  }
+
+  Container _personTextField(
+      {String labelText, String helperText, String property}) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 20.0),
       child: TextFormField(
@@ -104,13 +152,13 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         maxLines: 1,
         inputFormatters: [LengthLimitingTextInputFormatter(50)],
         decoration: InputDecoration(
-          labelText: "Nombre",
-          helperText: "Nombre de persona de la imagen",
+          labelText: labelText,
+          helperText: helperText,
         ),
         maxLengthEnforced: true,
         onChanged: (value) {
           setState(() {
-            _personName = value;
+            property = value;
           });
         },
       ),
