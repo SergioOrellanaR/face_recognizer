@@ -47,6 +47,8 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
       children: <Widget>[
         _nameTextField(),
         utils.verticalSeparator(),
+        _emailTextField(),
+        utils.verticalSeparator(),
         _professionTextField(),
         utils.verticalSeparator(),
         _hobbyTextField()
@@ -132,6 +134,15 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         leadingIcon: Icons.person,
         stream: _person.nameStream,
         onChangedFunction: _person.changeName);
+  }
+
+  StreamTextField _emailTextField() {
+    return StreamTextField(
+        labelText: "Email",
+        labelHint: "Email de la persona",
+        leadingIcon: Icons.mail_outline,
+        stream: _person.emailStream,
+        onChangedFunction: _person.changeEmail);
   }
 
   StreamTextField _professionTextField() {

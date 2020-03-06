@@ -10,6 +10,7 @@ class Person {
     int id;
     String imagePath;
     String name;
+    String email;
     String profession;
     String hobby;
 
@@ -17,6 +18,7 @@ class Person {
         this.id,
         this.imagePath,
         this.name,
+        this.email,
         this.profession,
         this.hobby,
     });
@@ -25,6 +27,7 @@ class Person {
         id: json["id"],
         imagePath: json["imagePath"],
         name: json["name"],
+        email: json["email"],
         profession: json["profession"],
         hobby: json["hobby"],
     );
@@ -33,6 +36,7 @@ class Person {
         "id": id,
         "imagePath": imagePath,
         "name": name,
+        "email": email,
         "profession": profession,
         "hobby": hobby,
     };
