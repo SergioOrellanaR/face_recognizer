@@ -170,7 +170,7 @@ class PersonInformationPage extends StatelessWidget {
         message: "Volver",
         backgroundColor: Colors.indigo,
         function: () {
-          Navigator.pushReplacementNamed(context, "home", arguments: "Memardo");
+          Navigator.pushReplacementNamed(context, "home");
         },
         isMainButton: true);
   }
