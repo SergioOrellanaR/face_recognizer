@@ -142,7 +142,7 @@ class PersonInformationPage extends StatelessWidget {
             {
               message = "Error al eliminar a ${controller.person.name}, intente más tarde";
             }
-            
+
             Navigator.pushReplacementNamed(context, "home", arguments: message);
           },
           isMainButton: true);
@@ -154,7 +154,7 @@ class PersonInformationPage extends StatelessWidget {
         message: "Volver",
         backgroundColor: Colors.indigo,
         function: () {
-          Navigator.pushReplacementNamed(context, "home");
+          Navigator.pushReplacementNamed(context, "home", arguments: "Memardo");
         },
         isMainButton: true);
   }
