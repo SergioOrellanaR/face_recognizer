@@ -1,16 +1,15 @@
 import 'dart:io';
+import 'package:facial_recognizer/src/widgets/SnackbarShowerOnInit.dart';
+import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:facial_recognizer/src/REST/SearchByImageResponse.dart';
 import 'package:facial_recognizer/src/models/AnimationColorController.dart';
 import 'package:facial_recognizer/src/models/ComparisonResult.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:facial_recognizer/src/models/PersonInformationController.dart';
 import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
-import 'package:facial_recognizer/src/widgets/AnimatedBackground.dart';
 import 'package:facial_recognizer/src/widgets/FancyBackground.dart';
-import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -38,10 +37,23 @@ class _HomePageState extends State<HomePage> {
       children: <Widget>[
         _halfScreenContainer(
             Icons.face, Colors.indigo, _registerPersonFunction(), true),
-        _halfScreenContainer(
-            Icons.search, Colors.black54, _recognizePersonFunction(context), false)
+        _halfScreenContainer(Icons.search, Colors.black54,
+            _recognizePersonFunction(context), false),
+        snackOnInit()
       ],
     );
+  }
+
+  Widget snackOnInit() {
+    if (_message != null) {
+      String mes = _message;
+      _message = null;
+      return SnackbarShower(
+        message: mes,
+      );
+    } else {
+      return Container();
+    }
   }
 
   Widget _halfScreenContainer(
@@ -88,8 +100,7 @@ class _HomePageState extends State<HomePage> {
 
   Future _getImage(context) async {
     File _image = await ImagePicker.pickImage(
-        //TODO: Cambiar según sea emulador o cámara real.
-        source: ImageSource.gallery,
+        source: ImageSource.camera,
         imageQuality: 100);
     if (_image != null) {
       _showSnackbar(context, "Realizando búsqueda de imagen...");
@@ -126,13 +137,5 @@ class _HomePageState extends State<HomePage> {
 
   _hideCurrentSnackbar(context) {
     Scaffold.of(context).hideCurrentSnackBar();
-  }
-
-  _showMessage() {
-    if (_message == null) {
-      return Container();
-    } else {
-      return Text(_message);
-    }
   }
 }

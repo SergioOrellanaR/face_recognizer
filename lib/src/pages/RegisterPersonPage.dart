@@ -2,9 +2,7 @@ import 'package:facial_recognizer/src/REST/EmotionResponse.dart';
 import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 import 'package:facial_recognizer/src/REST/RegisterResponse.dart';
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
-import 'package:facial_recognizer/src/models/AnimationColorController.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
-import 'package:facial_recognizer/src/widgets/AnimatedBackground.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
@@ -22,22 +20,35 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   PersonBloc _person = new PersonBloc();
   String _imagePath;
   String _message = "";
-  bool _thereAreErrors = false;
 
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
         appBar: utils.appBar(),
-        body: Stack(
-          children: <Widget>[
-            _background(),
-            _body(),
-          ],
+        body: Builder(
+          builder: (BuildContext context) {
+            return GestureDetector(
+              onTap: (){
+                
+              },
+              onPanDown: (_){
+                FocusScope.of(context).requestFocus(new FocusNode());
+              },
+              
+              child: Stack(
+                children: <Widget>[
+                  _background(),
+                  _body(context),
+                ],
+              ),
+            );
+          },
         ));
   }
 
-  ListView _body() {
+  ListView _body(context) {
     return ListView(
         reverse: true,
         children: <Widget>[
@@ -55,7 +66,7 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
           utils.verticalSeparator(),
           _personInformation(),
           utils.verticalSeparator(),
-          _registerButton()
+          _registerButton(context)
         ].reversed.toList());
   }
 
@@ -73,7 +84,7 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
     );
   }
 
-  _registerButton() {
+  _registerButton(context) {
     return StreamBuilder(
       stream: _person.formValidStream,
       builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -89,16 +100,20 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
                         hobby: _person.getHobby,
                         imagePath: _imagePath);
 
+                    _showSnackbar(context, "Procesando datos");
                     RegisterResponse registerResponse =
                         await rest.registerResponse(_imagePath, person);
-
+                    _hideCurrentSnackbar(context);
                     if (registerResponse.ok) {
                       Navigator.pushReplacementNamed(context, "home",
                           arguments:
-                              '${person.name} ha sido registrado en el sistema de forma exitosa');
+                              '${person.name} ha sido registrado correctamente');
                     } else {
-                      _message =
-                          "Ha ocurrido un error al realizar el registro: ${registerResponse.message}";
+                      setState(() {
+                        _message =
+                            "Ha ocurrido un error al realizar el registro: ${registerResponse.message}";
+                      });
+                      _showSnackbar(context, "Error!");
                     }
                   }
                 : null,
@@ -217,21 +232,26 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
     }
   }
 
-  _background() 
-  {
+  _background() {
     return Container(
       height: double.infinity,
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(colors: [
-          Color.fromRGBO(55, 59, 68, 0.6),
-          Color.fromRGBO(21, 101, 192, 0.3)
-                  
-        ],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight)
-      ),
-
+          gradient: LinearGradient(colors: [
+        Color.fromRGBO(55, 59, 68, 0.6),
+        Color.fromRGBO(21, 101, 192, 0.3)
+      ], begin: Alignment.topLeft, end: Alignment.bottomRight)),
     );
+  }
+
+  _showSnackbar(context, String message) {
+    Scaffold.of(context).showSnackBar(SnackBar(
+      content: Text(message),
+      duration: Duration(seconds: 5),
+    ));
+  }
+
+  _hideCurrentSnackbar(context) {
+    Scaffold.of(context).hideCurrentSnackBar();
   }
 }

@@ -153,10 +153,10 @@ class PersonInformationPage extends StatelessWidget {
             String message;
             if (await rest.deleteById(controller.person.id)) {
               message =
-                  "Los datos e imagen de ${controller.person.name} fueron eliminados satisfactoriamente";
+                  "Se han eliminado los datos de ${controller.person.name}";
             } else {
               message =
-                  "Error al eliminar a ${controller.person.name}, intente más tarde";
+                  "Error al eliminar datos de ${controller.person.name}, intente más tarde";
             }
 
             Navigator.pushReplacementNamed(context, "home", arguments: message);
