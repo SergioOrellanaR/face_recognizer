@@ -1,5 +1,6 @@
 import 'package:facial_recognizer/src/REST/EmotionResponse.dart';
 import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
+import 'package:facial_recognizer/src/REST/RegisterResponse.dart';
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:facial_recognizer/src/providers/DBProvider.dart';
@@ -72,14 +73,25 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
             message: "Registrar",
             backgroundColor: Colors.indigo,
             function: snapshot.hasData
-                ? (){
-                      DBProvider.connection.insertPerson(Person(
+                ? () async{
+                      Person person = Person(
                           name: _person.getName,
                           profession: _person.getProfession,
+                          email: _person.getEmail,
                           hobby: _person.getHobby,
-                          imagePath: _imagePath));
+                          imagePath: _imagePath);
+                          
+                      RegisterResponse registerResponse = await rest.registerResponse(_imagePath, person);
+
+                      if(registerResponse.ok)
+                      {
+                        Navigator.pushReplacementNamed(context, "home", arguments: '${person.name} ha sido registrado en el sistema de forma exitosa');
+                      }
+                      else
+                      {
+                        _message = "Ha ocurrido un error al realizar el registro: ${registerResponse.message}";
+                      }
                       
-                      Navigator.pushReplacementNamed(context, "home");
                     }
                 : null,
             isMainButton: true);

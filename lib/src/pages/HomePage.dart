@@ -17,9 +17,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   Size _screenSize;
+  String message;
+
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
+    message = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: utils.appBar(),
       body: _body()
@@ -33,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       SizedBox(
         height: _screenSize.height * 0.05,
       ),
-      loadPersons(),
+      showMessage(),
       SizedBox(
         height: _screenSize.height * 0.2,
       ),
@@ -41,23 +44,6 @@ class _HomePageState extends State<HomePage> {
       utils.verticalSeparator(),
       OperationButton(message: "Reconocer", backgroundColor: Colors.green, function: _recognizePersonFunction(), isMainButton: true)
     ]);
-  }
-
-  FutureBuilder loadPersons()
-  {
-    return FutureBuilder(
-      future: DBProvider.connection.getAllPersons(),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if(snapshot.hasData)
-        {
-          return HorizontalImageListView(persons: snapshot.data);
-        }
-        else
-        {
-          return CircularProgressIndicator();
-        }
-      },
-    );
   }
 
   Function _registerPersonFunction()
@@ -81,6 +67,18 @@ class _HomePageState extends State<HomePage> {
       // ComparisonResult comparisonResult = ComparisonResult(imagePath: _image.path);
       // Person person = new Person(id: 1, imagePath: _image.path);
       // Navigator.pushNamed(context, "information", arguments: PersonInformationController(person: person, comparisonResult: comparisonResult));
+    }
+  }
+
+  showMessage() 
+  {
+    if (message == null)
+    {
+      return Container();
+    }
+    else
+    {
+      return Text(message);
     }
   }
 }
