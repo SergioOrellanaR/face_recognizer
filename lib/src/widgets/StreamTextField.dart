@@ -21,8 +21,10 @@ class StreamTextField extends StatelessWidget {
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         return Container(
           padding: EdgeInsets.symmetric(horizontal: 20.0),
+          width: double.infinity,
           child: TextField(
             keyboardType: TextInputType.text,
+            
             decoration: InputDecoration(
                 icon: Icon(
                   leadingIcon,

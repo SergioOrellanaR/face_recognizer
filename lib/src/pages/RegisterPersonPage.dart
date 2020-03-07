@@ -1,3 +1,5 @@
+import 'package:facial_recognizer/src/REST/EmotionResponse.dart';
+import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:facial_recognizer/src/providers/DBProvider.dart';
@@ -17,6 +19,8 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   Size _screenSize;
   PersonBloc _person = new PersonBloc();
   String _imagePath;
+  String _message = "";
+  bool _thereAreErrors = false;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +29,9 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   }
 
   ListView _body() {
-    return ListView(children: <Widget>[
+    return ListView(
+      reverse: true,
+      children: <Widget>[
       SizedBox(
         height: _screenSize.height * 0.05,
       ),
@@ -36,10 +42,12 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
       utils.verticalSeparator(),
       _selectPhotoFrom(),
       utils.verticalSeparator(),
+      _showMessage(),
+      utils.verticalSeparator(),
       _personInformation(),
       utils.verticalSeparator(),
       _registerButton()
-    ]);
+    ].reversed.toList());
   }
 
   Wrap _personInformation() {
@@ -163,12 +171,31 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         onChangedFunction: _person.changeHobby);
   }
 
+  Text _showMessage()
+  {
+    return Text(_message, textAlign: TextAlign.center,);
+  }
+
   Future _getImage({@required ImageSource source}) async {
     io.File _image =
         await ImagePicker.pickImage(source: source, imageQuality: 100);
     if (_image != null) {
-      _person.changeImage(Image.file(_image));
-      _imagePath = _image.path;
+      EmotionResponse restResponse = await rest.emotionResponse(_image);
+      if (restResponse.ok)
+      {
+        _person.changeImage(Image.file(_image));
+        _imagePath = _image.path;
+        setState(() {
+          _message = "En la imagen pareces ${restResponse.emocion}";
+        });
+      }
+      else
+      {
+        setState(() {
+          _message = restResponse.message;
+        });
+        
+      }
     }
   }
 }
