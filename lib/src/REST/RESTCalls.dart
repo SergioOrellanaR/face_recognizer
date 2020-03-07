@@ -88,3 +88,10 @@ Future<SearchByImage> searchByImageResponse(File image) async {
     return SearchByImage(ok: false, results: responseData["results"]);
   }
 }
+
+Future<bool> deleteById(String id) async
+{
+  var uri = new Uri.http(serverURL, '/person/$id');
+  final response = await http.delete(uri);
+  return response.statusCode == 200 ? true : false;
+}

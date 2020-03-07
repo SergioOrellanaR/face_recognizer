@@ -1,10 +1,10 @@
 import 'package:facial_recognizer/src/models/ComparisonResult.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:facial_recognizer/src/models/PersonInformationController.dart';
-import 'package:facial_recognizer/src/providers/DBProvider.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:flutter/material.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
+import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 
 class PersonInformationPage extends StatelessWidget {
   @override
@@ -133,7 +133,17 @@ class PersonInformationPage extends StatelessWidget {
           message: "Borrar Persona",
           backgroundColor: Colors.red,
           function: () async {
-            Navigator.pushReplacementNamed(context, "home");
+            String message;
+            if (await rest.deleteById(controller.person.id))
+            {
+              message = "Los datos e imagen de ${controller.person.name} fueron eliminados satisfactoriamente";
+            }
+            else
+            {
+              message = "Error al eliminar a ${controller.person.name}, intente más tarde";
+            }
+            
+            Navigator.pushReplacementNamed(context, "home", arguments: message);
           },
           isMainButton: true);
     }

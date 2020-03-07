@@ -4,6 +4,9 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 
+
+//Esta clase no se llama desde ningun lado en estos momentos, pero inicialmente existió como repositorio de imágenes locales, ante la posibilidad de re agregar esta funcionalidad
+//Esta clase continuará aquí.
 class DBProvider {
   static Database _database;
   static final DBProvider connection = DBProvider._private();

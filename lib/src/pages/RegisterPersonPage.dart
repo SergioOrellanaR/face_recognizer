@@ -3,7 +3,6 @@ import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 import 'package:facial_recognizer/src/REST/RegisterResponse.dart';
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
-import 'package:facial_recognizer/src/providers/DBProvider.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
