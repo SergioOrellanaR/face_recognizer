@@ -1,6 +1,8 @@
+import 'package:facial_recognizer/src/models/AnimationColorController.dart';
 import 'package:facial_recognizer/src/models/ComparisonResult.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:facial_recognizer/src/models/PersonInformationController.dart';
+import 'package:facial_recognizer/src/widgets/AnimatedBackground.dart';
 import 'package:facial_recognizer/src/widgets/OperationButton.dart';
 import 'package:flutter/material.dart';
 import 'package:facial_recognizer/utils/utils.dart' as utils;
@@ -14,9 +16,13 @@ class PersonInformationPage extends StatelessWidget {
         ModalRoute.of(context).settings.arguments;
 
     return Scaffold(
-      appBar: utils.appBar(),
-      body: _body(context, _pageController, _screenSize),
-    );
+        appBar: utils.appBar(),
+        body: Stack(
+          children: <Widget>[
+            _background(),
+            _body(context, _pageController, _screenSize),
+          ],
+        ));
   }
 
   _body(BuildContext context, PersonInformationController pageController,
@@ -34,6 +40,16 @@ class PersonInformationPage extends StatelessWidget {
         utils.verticalSeparator(),
         _buttons(context, pageController)
       ],
+    );
+  }
+
+  _background() {
+    return AnimatedBackground(
+      colorController: AnimationColorController(
+          color1Begin: Color.fromRGBO(55, 59, 68, 0.6),
+          color1End: Colors.blueGrey,
+          color2Begin: Color.fromRGBO(21, 101, 192, 0.3),
+          color2End: Colors.white60),
     );
   }
 
@@ -99,7 +115,8 @@ class PersonInformationPage extends StatelessWidget {
       return Column(
         children: <Widget>[
           _subTitle("Datos de comparación"),
-          printData("Certeza", comparisonResult.similarity.toStringAsFixed(1)+"%")
+          printData(
+              "Certeza", comparisonResult.similarity.toStringAsFixed(1) + "%")
         ],
       );
     } else {
@@ -134,13 +151,12 @@ class PersonInformationPage extends StatelessWidget {
           backgroundColor: Colors.red,
           function: () async {
             String message;
-            if (await rest.deleteById(controller.person.id))
-            {
-              message = "Los datos e imagen de ${controller.person.name} fueron eliminados satisfactoriamente";
-            }
-            else
-            {
-              message = "Error al eliminar a ${controller.person.name}, intente más tarde";
+            if (await rest.deleteById(controller.person.id)) {
+              message =
+                  "Los datos e imagen de ${controller.person.name} fueron eliminados satisfactoriamente";
+            } else {
+              message =
+                  "Error al eliminar a ${controller.person.name}, intente más tarde";
             }
 
             Navigator.pushReplacementNamed(context, "home", arguments: message);

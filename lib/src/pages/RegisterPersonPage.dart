@@ -2,7 +2,9 @@ import 'package:facial_recognizer/src/REST/EmotionResponse.dart';
 import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 import 'package:facial_recognizer/src/REST/RegisterResponse.dart';
 import 'package:facial_recognizer/src/blocs/PersonBloc.dart';
+import 'package:facial_recognizer/src/models/AnimationColorController.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
+import 'package:facial_recognizer/src/widgets/AnimatedBackground.dart';
 import 'package:facial_recognizer/src/widgets/StreamTextField.dart';
 import 'package:flutter/material.dart';
 import 'dart:io' as io;
@@ -25,29 +27,36 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
   @override
   Widget build(BuildContext context) {
     _screenSize = MediaQuery.of(context).size;
-    return Scaffold(appBar: utils.appBar(), body: _body());
+    return Scaffold(
+        appBar: utils.appBar(),
+        body: Stack(
+          children: <Widget>[
+            _background(),
+            _body(),
+          ],
+        ));
   }
 
   ListView _body() {
     return ListView(
-      reverse: true,
-      children: <Widget>[
-      SizedBox(
-        height: _screenSize.height * 0.05,
-      ),
-      Align(
-        child: _imageStream(),
-        alignment: Alignment.center,
-      ),
-      utils.verticalSeparator(),
-      _selectPhotoFrom(),
-      utils.verticalSeparator(),
-      _showMessage(),
-      utils.verticalSeparator(),
-      _personInformation(),
-      utils.verticalSeparator(),
-      _registerButton()
-    ].reversed.toList());
+        reverse: true,
+        children: <Widget>[
+          SizedBox(
+            height: _screenSize.height * 0.05,
+          ),
+          Align(
+            child: _imageStream(),
+            alignment: Alignment.center,
+          ),
+          utils.verticalSeparator(),
+          _selectPhotoFrom(),
+          utils.verticalSeparator(),
+          _showMessage(),
+          utils.verticalSeparator(),
+          _personInformation(),
+          utils.verticalSeparator(),
+          _registerButton()
+        ].reversed.toList());
   }
 
   Wrap _personInformation() {
@@ -72,26 +81,26 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
             message: "Registrar",
             backgroundColor: Colors.indigo,
             function: snapshot.hasData
-                ? () async{
-                      Person person = Person(
-                          name: _person.getName,
-                          profession: _person.getProfession,
-                          email: _person.getEmail,
-                          hobby: _person.getHobby,
-                          imagePath: _imagePath);
-                          
-                      RegisterResponse registerResponse = await rest.registerResponse(_imagePath, person);
+                ? () async {
+                    Person person = Person(
+                        name: _person.getName,
+                        profession: _person.getProfession,
+                        email: _person.getEmail,
+                        hobby: _person.getHobby,
+                        imagePath: _imagePath);
 
-                      if(registerResponse.ok)
-                      {
-                        Navigator.pushReplacementNamed(context, "home", arguments: '${person.name} ha sido registrado en el sistema de forma exitosa');
-                      }
-                      else
-                      {
-                        _message = "Ha ocurrido un error al realizar el registro: ${registerResponse.message}";
-                      }
-                      
+                    RegisterResponse registerResponse =
+                        await rest.registerResponse(_imagePath, person);
+
+                    if (registerResponse.ok) {
+                      Navigator.pushReplacementNamed(context, "home",
+                          arguments:
+                              '${person.name} ha sido registrado en el sistema de forma exitosa');
+                    } else {
+                      _message =
+                          "Ha ocurrido un error al realizar el registro: ${registerResponse.message}";
                     }
+                  }
                 : null,
             isMainButton: true);
       },
@@ -182,9 +191,11 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         onChangedFunction: _person.changeHobby);
   }
 
-  Text _showMessage()
-  {
-    return Text(_message, textAlign: TextAlign.center,);
+  Text _showMessage() {
+    return Text(
+      _message,
+      textAlign: TextAlign.center,
+    );
   }
 
   Future _getImage({@required ImageSource source}) async {
@@ -192,21 +203,35 @@ class _RegisterPersonPageState extends State<RegisterPersonPage> {
         await ImagePicker.pickImage(source: source, imageQuality: 100);
     if (_image != null) {
       EmotionResponse restResponse = await rest.emotionResponse(_image);
-      if (restResponse.ok)
-      {
+      if (restResponse.ok) {
         _person.changeImage(Image.file(_image));
         _imagePath = _image.path;
         setState(() {
           _message = "En la imagen pareces ${restResponse.emocion}";
         });
-      }
-      else
-      {
+      } else {
         setState(() {
           _message = restResponse.message;
         });
-        
       }
     }
+  }
+
+  _background() 
+  {
+    return Container(
+      height: double.infinity,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(colors: [
+          Color.fromRGBO(55, 59, 68, 0.6),
+          Color.fromRGBO(21, 101, 192, 0.3)
+                  
+        ],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight)
+      ),
+
+    );
   }
 }

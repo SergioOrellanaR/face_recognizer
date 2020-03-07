@@ -24,14 +24,26 @@ class StreamTextField extends StatelessWidget {
           width: double.infinity,
           child: TextField(
             keyboardType: TextInputType.text,
-            
+            cursorColor: Colors.black87,
             decoration: InputDecoration(
                 icon: Icon(
                   leadingIcon,
-                  color: Colors.deepPurple,
+                  color: Colors.black87,
                 ),
                 hintText: labelHint,
                 labelText: labelText,
+                focusColor: Colors.black87,
+                hoverColor: Colors.black87,
+                fillColor: Colors.black87,
+                labelStyle: new TextStyle(color: const Color(0xFF424242)),
+                border: new UnderlineInputBorder(
+                    borderSide: new BorderSide(color: Colors.red)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black87),
+                ),
+                focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: Colors.black87),
+                ),
                 counterText: snapshot.data,
                 errorText: snapshot.error),
             onChanged: onChangedFunction,
