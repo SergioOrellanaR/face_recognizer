@@ -1,4 +1,4 @@
-package com.example.facial_recognizer
+package com.serorellanar.facialRecognizer
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity
