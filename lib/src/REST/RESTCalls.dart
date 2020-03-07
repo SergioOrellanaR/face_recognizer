@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:facial_recognizer/src/REST/EmotionResponse.dart';
 import 'package:facial_recognizer/src/REST/RegisterResponse.dart';
+import 'package:facial_recognizer/src/REST/SearchByImageResponse.dart';
 import 'package:facial_recognizer/src/models/Person.dart';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
@@ -61,5 +62,29 @@ Future<RegisterResponse> registerResponse(String imagePath, Person person) async
     return RegisterResponse(ok: true, imageData: null, person: PersonData.fromJson(responseData["person"]), message: null); 
   } else {
     return RegisterResponse(ok: false, imageData: null, person: null, message: responseData["results"]);
+  }
+}
+
+Future<SearchByImage> searchByImageResponse(File image) async {
+  var uri = new Uri.http(serverURL, '/searchPersonByImage');
+
+  final mimeType = mime(image.path).split("/");
+
+  final imageUploadRequest = http.MultipartRequest("POST", uri);
+
+  final file = await http.MultipartFile.fromPath("image", image.path,
+      contentType: MediaType(mimeType[0], mimeType[1]));
+
+  imageUploadRequest.files.add(file);
+
+  final streamResponse = await imageUploadRequest.send();
+
+  final response = await http.Response.fromStream(streamResponse);
+  final responseData = json.decode(response.body);
+
+  if (response.statusCode == 200) {
+    return searchByImageFromJson(response.body);
+  } else {
+    return SearchByImage(ok: false, results: responseData["results"]);
   }
 }

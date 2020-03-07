@@ -58,7 +58,7 @@ class PersonInformationPage extends StatelessWidget {
       return Row(
         children: <Widget>[
           _loadImage(pageController.comparisonResult.getImage(), screenSize),
-          _loadImage(pageController.person.getImage(), screenSize)
+          _loadImage(pageController.person.getNetworkImage(), screenSize)
         ],
         mainAxisAlignment: MainAxisAlignment.spaceAround,
       );
@@ -85,6 +85,8 @@ class PersonInformationPage extends StatelessWidget {
         _subTitle("Información de persona"),
         printData("Nombre", person.name),
         Divider(),
+        printData("Email", person.email),
+        Divider(),
         printData("Profesión", person.profession),
         Divider(),
         printData("Hobby", person.hobby)
@@ -97,6 +99,7 @@ class PersonInformationPage extends StatelessWidget {
       return Column(
         children: <Widget>[
           _subTitle("Datos de comparación"),
+          printData("Certeza", comparisonResult.similarity.toStringAsFixed(1)+"%")
         ],
       );
     } else {
@@ -123,14 +126,13 @@ class PersonInformationPage extends StatelessWidget {
   }
 
   _deleteButton(BuildContext context, PersonInformationController controller) {
-    if (controller.comparisonResult != null) {
+    if (controller.comparisonResult == null) {
       return Container();
     } else {
       return OperationButton(
-          message: "Borrar",
+          message: "Borrar Persona",
           backgroundColor: Colors.red,
-          function: () {
-            DBProvider.connection.deletePerson(controller.person.id);
+          function: () async {
             Navigator.pushReplacementNamed(context, "home");
           },
           isMainButton: true);

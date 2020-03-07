@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
 
 Person personFromJson(String str) => Person.fromJson(json.decode(str));
 
 String personToJson(Person data) => json.encode(data.toJson());
 
 class Person {
-    int id;
+    String id;
     String imagePath;
     String name;
     String email;
@@ -45,5 +46,13 @@ class Person {
     {
       return Image.file(File(imagePath),
               fit: BoxFit.fill);
+    }
+
+    Image getNetworkImage()
+    {
+      String server = rest.serverURL;
+      Uri path = Uri.http(server, imagePath);
+
+      return Image.network(path.toString(), fit: BoxFit.fill);
     }
 }
