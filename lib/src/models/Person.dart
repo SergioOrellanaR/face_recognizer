@@ -1,7 +1,10 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:facial_recognizer/src/REST/HttpsRequest.dart';
+import 'package:facial_recognizer/utils/NetworkSSLImage.dart';
 import 'package:flutter/material.dart';
 import 'package:facial_recognizer/src/REST/RESTCalls.dart' as rest;
+import 'package:http/http.dart';
 
 Person personFromJson(String str) => Person.fromJson(json.decode(str));
 
@@ -51,8 +54,9 @@ class Person {
     Image getNetworkImage()
     {
       String server = rest.serverURL;
-      Uri path = Uri.https(server, imagePath);
-
-      return Image.network(path.toString(), fit: BoxFit.fill);
+      String subPath = '${rest.prefixRestURL}/$imagePath';
+      Uri path = Uri.https(server, subPath);
+      
+      return Image(image: NetworkImageSSL(path.toString()), fit: BoxFit.cover);
     }
 }

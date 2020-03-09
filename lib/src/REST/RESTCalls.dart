@@ -14,7 +14,7 @@ final String serverURL = "serorellanar.com";
 final String prefixRestURL = "/rest/recognizerApi";
 http.IOClient ioClient;
 
-Future _httpsClientWithCertificate() async
+Future httpsClientWithCertificate() async
 {
   SecurityContext context = new SecurityContext();
   final ByteData crtData = await rootBundle.load('assets/certificate.crt');
@@ -26,6 +26,8 @@ Future _httpsClientWithCertificate() async
 Future<EmotionResponse> emotionResponse(File image) async {
   
   var uri = new Uri.https(serverURL, prefixRestURL + '/emotion');
+
+  await httpsClientWithCertificate();
 
   final mimeType = mime(image.path).split("/");
 
@@ -59,6 +61,8 @@ Future<EmotionResponse> emotionResponse(File image) async {
 Future<RegisterResponse> registerResponse(
     String imagePath, Person person) async {
   var uri = new Uri.https(serverURL, prefixRestURL + '/person');
+
+  await httpsClientWithCertificate();
 
   final mimeType = mime(imagePath).split("/");
 
@@ -100,6 +104,8 @@ Future<RegisterResponse> registerResponse(
 Future<SearchByImage> searchByImageResponse(File image) async {
   var uri = new Uri.https(serverURL, prefixRestURL + '/searchPersonByImage');
 
+  await httpsClientWithCertificate();
+
   final mimeType = mime(image.path).split("/");
 
   final imageUploadRequest = HttpsRequest("POST", uri, ioClient);
@@ -123,6 +129,8 @@ Future<SearchByImage> searchByImageResponse(File image) async {
 
 Future<bool> deleteById(String id) async {
   var uri = new Uri.https(serverURL, prefixRestURL + '/person/$id');
+
+  await httpsClientWithCertificate();
   final response = await http.delete(uri);
   return response.statusCode == 200 ? true : false;
 }
