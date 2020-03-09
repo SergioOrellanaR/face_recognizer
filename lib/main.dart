@@ -1,4 +1,5 @@
 
+import 'package:facial_recognizer/src/REST/RESTCalls.dart';
 import 'package:facial_recognizer/src/pages/HomePage.dart';
 import 'package:flutter/material.dart';
 import 'package:facial_recognizer/utils/routes.dart' as routes;
@@ -6,6 +7,8 @@ import 'package:facial_recognizer/utils/routes.dart' as routes;
 void main() async
 { 
   WidgetsFlutterBinding.ensureInitialized();
+  // final restCalls = new RestCalls();
+  // await restCalls.initCalls();
   runApp(MyApp());
 }
 

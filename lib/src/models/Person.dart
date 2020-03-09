@@ -51,7 +51,7 @@ class Person {
     Image getNetworkImage()
     {
       String server = rest.serverURL;
-      Uri path = Uri.http(server, imagePath);
+      Uri path = Uri.https(server, imagePath);
 
       return Image.network(path.toString(), fit: BoxFit.fill);
     }

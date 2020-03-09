@@ -100,7 +100,7 @@ class _HomePageState extends State<HomePage> {
 
   Future _getImage(context) async {
     File _image = await ImagePicker.pickImage(
-        source: ImageSource.camera,
+        source: ImageSource.gallery,
         imageQuality: 100);
     if (_image != null) {
       _showSnackbar(context, "Realizando búsqueda de imagen...");
